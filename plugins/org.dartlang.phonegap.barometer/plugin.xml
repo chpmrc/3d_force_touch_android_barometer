@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="org.dartlang.phonegap.barometer"
+      version="0.0.2">
+	
+    <name>Device Barometer</name>
+    <description>Cordova Device Barometer Plugin</description>
+    <license>LICENSE</license>
+    <keywords>cordova,device,barometer</keywords>
+    <repo>https://github.com/zanderso/cordova-plugin-barometer</repo>
+    <issue></issue>
+
+    <js-module src="www/Pressure.js" name="Pressure">
+        <clobbers target="Pressure" />
+    </js-module>
+    
+    <js-module src="www/barometer.js" name="barometer">
+        <clobbers target="navigator.barometer" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+	    
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Barometer">
+                <param name="android-package" value="org.dartlang.phonegap.barometer.BarometerListener"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/BarometerListener.java" target-dir="src/org/dartlang/phonegap/barometer" />
+    
+    </platform>
+</plugin>

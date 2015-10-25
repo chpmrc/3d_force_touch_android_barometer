@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="io.cordova.hellocordova" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <preference name="loglevel" value="DEBUG" />
+    <feature name="Whitelist">
+        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Barometer">
+        <param name="android-package" value="org.dartlang.phonegap.barometer.BarometerListener" />
+    </feature>
+    <allow-intent href="market:*" />
+    <name>3D Force Touch Demo</name>
+    <description>
+        A simple 3D Force Touch demo using the barometer 
+    </description>
+    <author email="lambdacomplete@gmail.com" href="http://hackandstack.com">
+        Marco Chiappetta
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+</widget>
