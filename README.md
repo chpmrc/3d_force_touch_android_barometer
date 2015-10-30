@@ -8,7 +8,12 @@ I used this plugin for Cordova: https://github.com/zanderso/cordova-plugin-barom
 
 Video: https://www.youtube.com/watch?v=22lia7w03sQ .
 
-# How to run
+# (For testers) How to install on your device
+
+First of all enable `Unknown sources` in the developer settings.
+Then download and install the most recent apk you can find in the [`builds/`](builds) folder.
+
+# (For devs) How to run with Apache Cordova
 
 Just clone the repository, `cd` in its directory, connect your Android phone via ADB and run:
 
