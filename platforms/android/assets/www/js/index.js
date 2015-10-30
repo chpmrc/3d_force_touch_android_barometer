@@ -35,21 +35,32 @@ var app = {
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
+    picInitSize: 100, // px
+    minPressure: 1010.0, // may vary according to the device and the environment
+    maxPressure: 1020.0, // may vary according to the device and the environment
+    currentCoords: null,
     onDeviceReady: function() {
-        // app.receivedEvent('deviceready');
-        // app.watchPressure();
+        console.log("Set up");
+        var pic = document.getElementById('pic');
+        pic.style.position = "fixed";
+        pic.style.width = app.picInitSize;
+        pic.style.height = app.picInitSize;
     },
     onPicTouchedStart: function(e) {
         console.log(e);
+        var coords = {};
+        coords.x = e.touches[0].clientX;
+        coords.y = e.touches[0].clientY;
+        app.currentCoords = coords;
         app.watchPressure();
     },
     onPicTouchedMove: function(e) {
         var coords = {};
+        var pic = document.getElementById('pic');
         coords.x = e.touches[0].clientX;
         coords.y = e.touches[0].clientY;
-        var pic = document.getElementById('pic');
-        pic.style.left = "" + (coords.x - (pic.width / 2)) + "px";
-        pic.style.top = "" + (coords.y - (pic.height / 2)) + "px";
+        app.repositionPicAtCoords(pic, coords);
+        app.currentCoords = coords;
     },
     onPicTouchedEnd: function(e) {
         console.log("Touch ended");
@@ -58,30 +69,24 @@ var app = {
             navigator.barometer.clearWatch(app.watchID);
         }
     },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
+    repositionPicAtCoords: function(pic, coords) {
+        pic.style.left = "" + (coords.x - (pic.width / 2)) + "px";
+        pic.style.top = "" + (coords.y - (pic.height / 2)) + "px";
     },
     watchPressure: function() {
-        var max = 1020.0; // These values can change depending on the environment's pressure (calibration?)
-        var min = 1010.0;
+        var max = app.maxPressure; // These values can change depending on the environment's pressure (calibration?)
+        var min = app.minPressure;
         var pressureBox = document.getElementById('pressureBox');
         var pic = document.getElementById('pic');
-        var initPicSize = pic.width;
+        var initPicSize = app.picInitSize;
         
         function onSuccess(pressure) {
             var current = pressure.val;
             var factor = ((current - min) / (max - min) + 1); // Scale and transpose [0,1] -> [1, 2]
             pressureBox.innerHTML = "" + pressure.val + " / " + factor;
-            pic.width = initPicSize * Math.pow(factor, 2);
-            pic.height = initPicSize * Math.pow(factor, 2);
+            pic.style.width = initPicSize * Math.pow(factor, 4) + "px";
+            pic.style.height = initPicSize * Math.pow(factor, 4) + "px";
+            app.repositionPicAtCoords(pic, app.currentCoords); // Keep the pic centered on the finger when resizing
         };
 
         function onError() {
