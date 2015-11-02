@@ -36,8 +36,8 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     picInitSize: 100, // px
-    minPressure: 1010.0, // may vary according to the device and the environment
-    maxPressure: 1020.0, // may vary according to the device and the environment
+    minPressure: 1000.0, // may vary according to the device and the environment
+    maxPressure: 1030.0, // may vary according to the device and the environment
     currentCoords: null,
     onDeviceReady: function() {
         console.log("Set up");
