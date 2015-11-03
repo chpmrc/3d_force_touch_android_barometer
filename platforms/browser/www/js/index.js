@@ -30,32 +30,49 @@ var app = {
         document.getElementById('pic').addEventListener('touchstart', this.onPicTouchedStart, false);
         document.getElementById('pic').addEventListener('touchmove', this.onPicTouchedMove, false);
         document.getElementById('pic').addEventListener('touchend', this.onPicTouchedEnd, false);
+        document.getElementById('minPressure').addEventListener('change', this.setPressureLimits);
+        document.getElementById('maxPressure').addEventListener('change', this.setPressureLimits);
     },
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
-    picInitSize: 200, // px
-    minPressure: 1000.0, // may vary according to the device and the environment
-    maxPressure: 1020.0, // may vary according to the device and the environment
+    picInitSize: 100, // px
+    minPressure: null, // may vary according to the device and the environment
+    maxPressure: null, // may vary according to the device and the environment
+    currentCoords: null,
+    setPressureLimits: function(e) {
+        console.log(e.target.value);
+        if (e.target.id == "minPressure") {
+            app.minPressure = parseInt(e.target.value);
+        }
+        if (e.target.id == "maxPressure") {
+            app.maxPressure = parseInt(e.target.value);
+        }
+    },
     onDeviceReady: function() {
         console.log("Set up");
         var pic = document.getElementById('pic');
         pic.style.position = "fixed";
         pic.style.width = app.picInitSize;
         pic.style.height = app.picInitSize;
+        app.setPressureLimits()
     },
     onPicTouchedStart: function(e) {
         console.log(e);
+        var coords = {};
+        coords.x = e.touches[0].clientX;
+        coords.y = e.touches[0].clientY;
+        app.currentCoords = coords;
         app.watchPressure();
     },
     onPicTouchedMove: function(e) {
         var coords = {};
+        var pic = document.getElementById('pic');
         coords.x = e.touches[0].clientX;
         coords.y = e.touches[0].clientY;
-        var pic = document.getElementById('pic');
-        pic.style.left = "" + (coords.x - (pic.width / 2)) + "px";
-        pic.style.top = "" + (coords.y - (pic.height / 2)) + "px";
+        app.repositionPicAtCoords(pic, coords);
+        app.currentCoords = coords;
     },
     onPicTouchedEnd: function(e) {
         console.log("Touch ended");
@@ -63,6 +80,10 @@ var app = {
             console.log("Clearing watch " + app.watchID);
             navigator.barometer.clearWatch(app.watchID);
         }
+    },
+    repositionPicAtCoords: function(pic, coords) {
+        pic.style.left = "" + (coords.x - (pic.width / 2)) + "px";
+        pic.style.top = "" + (coords.y - (pic.height / 2)) + "px";
     },
     watchPressure: function() {
         var max = app.maxPressure; // These values can change depending on the environment's pressure (calibration?)
@@ -75,8 +96,9 @@ var app = {
             var current = pressure.val;
             var factor = ((current - min) / (max - min) + 1); // Scale and transpose [0,1] -> [1, 2]
             pressureBox.innerHTML = "" + pressure.val + " / " + factor;
-            pic.style.width = initPicSize * Math.pow(factor, 2) + "px";
-            pic.style.height = initPicSize * Math.pow(factor, 2) + "px";
+            pic.style.width = initPicSize * Math.pow(factor, 4) + "px";
+            pic.style.height = initPicSize * Math.pow(factor, 4) + "px";
+            app.repositionPicAtCoords(pic, app.currentCoords); // Keep the pic centered on the finger when resizing
         };
 
         function onError() {

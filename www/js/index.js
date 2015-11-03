@@ -30,21 +30,37 @@ var app = {
         document.getElementById('pic').addEventListener('touchstart', this.onPicTouchedStart, false);
         document.getElementById('pic').addEventListener('touchmove', this.onPicTouchedMove, false);
         document.getElementById('pic').addEventListener('touchend', this.onPicTouchedEnd, false);
+        document.getElementById('minPressure').addEventListener('change', this.setPressureLimits);
+        document.getElementById('maxPressure').addEventListener('change', this.setPressureLimits);
     },
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     picInitSize: 100, // px
-    minPressure: 1000.0, // may vary according to the device and the environment
-    maxPressure: 1030.0, // may vary according to the device and the environment
+    minPressure: null, // may vary according to the device and the environment
+    maxPressure: null, // may vary according to the device and the environment
     currentCoords: null,
+    setPressureLimits: function(e) {
+        if (!e) {
+            app.minPressure = document.getElementById('minPressure').value;
+            app.maxPressure = document.getElementById('maxPressure').value;
+        } else {
+            if (e.target.id == "minPressure") {
+                app.minPressure = parseInt(e.target.value);
+            }
+            if (e.target.id == "maxPressure") {
+                app.maxPressure = parseInt(e.target.value);
+            }
+        }
+    },
     onDeviceReady: function() {
         console.log("Set up");
         var pic = document.getElementById('pic');
         pic.style.position = "fixed";
         pic.style.width = app.picInitSize;
         pic.style.height = app.picInitSize;
+        app.setPressureLimits()
     },
     onPicTouchedStart: function(e) {
         console.log(e);
@@ -76,6 +92,7 @@ var app = {
     watchPressure: function() {
         var max = app.maxPressure; // These values can change depending on the environment's pressure (calibration?)
         var min = app.minPressure;
+        console.log("Pressures: ", max, min);
         var pressureBox = document.getElementById('pressureBox');
         var pic = document.getElementById('pic');
         var initPicSize = app.picInitSize;
@@ -84,8 +101,8 @@ var app = {
             var current = pressure.val;
             var factor = ((current - min) / (max - min) + 1); // Scale and transpose [0,1] -> [1, 2]
             pressureBox.innerHTML = "" + pressure.val + " / " + factor;
-            pic.style.width = initPicSize * Math.pow(factor, 4) + "px";
-            pic.style.height = initPicSize * Math.pow(factor, 4) + "px";
+            pic.style.width = initPicSize * Math.pow(factor, 5) + "px";
+            pic.style.height = initPicSize * Math.pow(factor, 5) + "px";
             app.repositionPicAtCoords(pic, app.currentCoords); // Keep the pic centered on the finger when resizing
         };
 
