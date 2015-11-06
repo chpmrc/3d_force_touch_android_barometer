@@ -6,7 +6,7 @@ I made this in 10-15 minutes so the quality of the code is really bad. It is jus
 
 I used this plugin for Cordova: https://github.com/zanderso/cordova-plugin-barometer .
 
-Video: https://www.youtube.com/watch?v=22lia7w03sQ .
+Video: https://www.youtube.com/watch?v=BgNXsJeN7ek&feature=youtu.be .
 
 # (For testers) How to install on your device
 
